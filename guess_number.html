@@ -1,0 +1,182 @@
+<html><head><base href="https://random.example.com/guess-the-number/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Угадай число - Веселая игра!</title>
+<style>
+  body {
+    font-family: 'Press Start 2P', cursive;
+    background-color: #87CEEB;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .game-container {
+    background-color: #FFA500;
+    border: 8px solid #000;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  h1 {
+    color: #FF69B4;
+    text-shadow: 2px 2px #000;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  input, button {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px;
+    margin: 10px;
+    padding: 10px;
+    border: 4px solid #000;
+    border-radius: 8px;
+  }
+  button {
+    background-color: #32CD32;
+    color: #FFF;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  button:hover {
+    background-color: #228B22;
+    transform: scale(1.05);
+  }
+  #message {
+    font-size: 18px;
+    margin-top: 20px;
+    color: #FF69B4;
+    text-shadow: 1px 1px #000;
+  }
+  .pixel-cloud {
+    position: absolute;
+    background-color: #FFF;
+    width: 60px;
+    height: 30px;
+    border-radius: 15px;
+    top: -30px;
+    animation: float 10s infinite linear;
+  }
+  .pixel-cloud::before, .pixel-cloud::after {
+    content: '';
+    position: absolute;
+    background-color: #FFF;
+    border-radius: 50%;
+  }
+  .pixel-cloud::before {
+    width: 30px;
+    height: 30px;
+    top: -15px;
+    left: 10px;
+  }
+  .pixel-cloud::after {
+    width: 40px;
+    height: 40px;
+    top: -20px;
+    right: 10px;
+  }
+  @keyframes float {
+    0% { left: -60px; }
+    100% { left: 100%; }
+  }
+  .mario-pipe {
+    position: absolute;
+    bottom: -60px;
+    left: 20px;
+    width: 80px;
+    height: 100px;
+    background-color: #00A86B;
+    border: 4px solid #000;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+  }
+  .mario-pipe::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -8px;
+    width: 96px;
+    height: 30px;
+    background-color: #00A86B;
+    border: 4px solid #000;
+    border-radius: 8px;
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="game-container">
+    <div class="pixel-cloud"></div>
+    <div class="pixel-cloud" style="animation-delay: -5s;"></div>
+    <div class="mario-pipe"></div>
+    <h1>Угадай число!</h1>
+    <p>Попробуй угадать число от 1 до 100:</p>
+    <input type="number" id="guessInput" min="1" max="100">
+    <button onclick="checkGuess()">Проверить</button>
+    <p id="message"></p>
+  </div>
+
+  <script>
+    let secretNumber = Math.floor(Math.random() * 100) + 1;
+    let attempts = 0;
+
+    function checkGuess() {
+      let guess = parseInt(document.getElementById('guessInput').value);
+      attempts++;
+
+      if (isNaN(guess) || guess < 1 || guess > 100) {
+        setMessage('Пожалуйста, введите число от 1 до 100!', '#FF0000');
+      } else if (guess === secretNumber) {
+        setMessage(`Поздравляем! Вы угадали число ${secretNumber} за ${attempts} попыток!`, '#32CD32');
+        confetti();
+      } else if (guess < secretNumber) {
+        setMessage('Попробуй число побольше!', '#FF69B4');
+      } else {
+        setMessage('Попробуй число поменьше!', '#FF69B4');
+      }
+    }
+
+    function setMessage(msg, color) {
+      let messageEl = document.getElementById('message');
+      messageEl.textContent = msg;
+      messageEl.style.color = color;
+    }
+
+    function confetti() {
+      for (let i = 0; i < 100; i++) {
+        let confetti = document.createElement('div');
+        confetti.style.width = '10px';
+        confetti.style.height = '10px';
+        confetti.style.backgroundColor = randomColor();
+        confetti.style.position = 'absolute';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.top = '-10px';
+        confetti.style.borderRadius = '50%';
+        confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear`;
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => confetti.remove(), 5000);
+      }
+    }
+
+    function randomColor() {
+      return '#' + Math.floor(Math.random()*16777215).toString(16);
+    }
+
+    document.body.insertAdjacentHTML('beforeend', `
+      <style>
+        @keyframes fall {
+          to {
+            transform: translateY(100vh) rotate(360deg);
+          }
+        }
+      </style>
+    `);
+  </script>
+</body></html>
